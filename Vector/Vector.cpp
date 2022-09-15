@@ -8,12 +8,13 @@ Vector::Vector(Number x, Number y){
 }
 
 Number Vector::getR() {
-	return Number(std::sqrt(pow(_cords[0].getNumber(), 2) + pow(_cords[1].getNumber(), 2)));
+	Number x = _cords[0] * _cords[0];
+	Number y = _cords[1] * _cords[1];
+	return Number(std::sqrt(x.getNumber() + y.getNumber()));
 }
 
 Number Vector::getAngle() {
-	Number r = Number(std::sqrt(pow(_cords[0].getNumber(), 2) + pow(_cords[1].getNumber(), 2)));
-	Number sin = _cords[1] / r;
+	Number sin = _cords[1] / this->getR();
 	return Number(asin(sin.getNumber()));
 }
 
