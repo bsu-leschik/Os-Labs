@@ -8,7 +8,7 @@ void Number::changeNumber(double newNumber) {
 	_number = newNumber;
 }
 
-int Number::getNumber() {
+double Number::getNumber() {
 	return _number;
 }
 

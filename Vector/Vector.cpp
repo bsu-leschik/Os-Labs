@@ -7,16 +7,14 @@ Vector::Vector(Number x, Number y){
 	_cords[1] = y;
 }
 
-Number Vector::convertXToPolar() {
-	Number r = Number(std::sqrt(pow(_cords[0].getNumber(), 2) + pow(_cords[1].getNumber(), 2)));
-	Number cos = _cords[0] / r;
-	return r * cos;
+Number Vector::getR() {
+	return Number(std::sqrt(pow(_cords[0].getNumber(), 2) + pow(_cords[1].getNumber(), 2)));
 }
 
-Number Vector::convertYToPolar() {
+Number Vector::getAngle() {
 	Number r = Number(std::sqrt(pow(_cords[0].getNumber(), 2) + pow(_cords[1].getNumber(), 2)));
 	Number sin = _cords[1] / r;
-	return r * sin;
+	return Number(asin(sin.getNumber()));
 }
 
 Number VECTOR_API Vector::getX()

@@ -17,7 +17,7 @@ public:
 
 	void changeNumber(double newNumber);
 
-	int getNumber();
+	double getNumber();
 
 	friend Number& operator+(Number number1, Number number2);
 

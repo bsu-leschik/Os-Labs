@@ -20,9 +20,9 @@ public:
 
 	VECTOR_API Vector(Number x, Number y);
 
-	Number VECTOR_API convertXToPolar();
+	Number VECTOR_API getR();
 
-	Number VECTOR_API convertYToPolar();
+	Number VECTOR_API getAngle();
 
 	Number VECTOR_API getX();
 
