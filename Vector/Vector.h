@@ -24,7 +24,11 @@ public:
 
 	Number VECTOR_API convertYToPolar();
 
-	static Vector VECTOR_API add(Vector & vec1, Vector & vec2);
+	Number VECTOR_API getX();
+
+	Number VECTOR_API getY();
+
+	static Vector VECTOR_API add(Vector vec1, Vector vec2);
 
 	friend VECTOR_API std::ostream& operator<<(std::ostream& os, const Vector& number);
 };

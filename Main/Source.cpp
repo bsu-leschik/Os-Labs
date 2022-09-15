@@ -17,7 +17,7 @@ int main() {
 
 	std::cout << "------------Vector Tests--------------" << std::endl;
 
-	std::cout << vec1 << "///" << vec2 <<"----" << Vector::add(vec1, vec2) << std::endl;
+	std::cout << vec1 << "///" << vec2 << "----" << Vector::add(vec1, vec2) << std::endl;
 	std::cout << vec1.convertXToPolar() << "-/-" << vec2.convertYToPolar() << std::endl;
 	std::cout << Vectors::zero << "-/-" << Vectors::one << std::endl;
 

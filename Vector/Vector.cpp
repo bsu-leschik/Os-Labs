@@ -19,8 +19,20 @@ Number Vector::convertYToPolar() {
 	return r * sin;
 }
 
-Vector Vector::add(Vector& vec1, Vector& vec2) {
-	Vector result = Vector(vec1._cords[0] + vec2._cords[0], vec1._cords[1] + vec2._cords[1]);
+Number VECTOR_API Vector::getX()
+{
+	return _cords[0];
+}
+
+Number VECTOR_API Vector::getY()
+{
+	return _cords[1];
+}
+
+Vector Vector::add(Vector vec1, Vector vec2) {
+	Number x = vec1._cords[0] + vec2._cords[0];
+	Number y = vec1._cords[1] + vec2._cords[1];
+	Vector result = Vector(x, y);
 	return result;
 }
 
