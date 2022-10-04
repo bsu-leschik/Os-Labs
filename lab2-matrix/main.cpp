@@ -17,11 +17,12 @@ int main(){
     std::vector<int> line9 = std::vector<int>({7, 12, 43, 5, 95});
     std::vector<std::vector<int>> matrix1 = std::vector<std::vector<int>>({line5, line6, line7, line8, line9});
 
-    Matrix m = Matrix(matrix);
-    Matrix m1 = Matrix(matrix1);
+    Matrix<int> m = Matrix<int>(matrix);
+    Matrix<int> m1 = Matrix<int>(matrix1);
 
-    Matrix res = m * m1;
+    Matrix<int> resSum = m + m1;
+    Matrix<int> res = m * m1;
 
-    std::cout << res;
+    std::cout << res << std::endl << resSum << std::endl;
     return 0;
 }

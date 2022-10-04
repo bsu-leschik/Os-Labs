@@ -4,27 +4,34 @@
 #include <iostream>
 #include <vector>
 
+template<typename T>
 class Matrix {
 private:
-    std::vector<std::vector<int>> _matrix;
+    std::vector<std::vector<T>> _matrix;
 
-    static int multiplyLineAndRow(const std::vector<int>& line,const std::vector<int>& row);
+    static int multiplyLineAndRow(const std::vector<T>& line,const std::vector<T>& row);
 public:
     Matrix() = default;
 
-    explicit Matrix(std::vector<std::vector<int>> matrix);
+    explicit Matrix(std::vector<std::vector<T>> matrix);
 
-    int getRows();
+    explicit Matrix(int size);
 
-    [[nodiscard]] std::vector<int> getRow(int i) const;
+    [[nodiscard]] int getSize() const;
 
-    void addLine(const std::vector<int>& row);
+    [[nodiscard]] std::vector<T> getRow(int i) const;
 
-    friend Matrix operator*(const Matrix& m1, const Matrix& m2);
+    void addLine(const std::vector<T>& row);
 
-    friend std::ostream& operator<<(std::ostream& out, Matrix& m);
+    T getElement(int line, int row) const;
 
+    Matrix<T> operator*(const Matrix<T>& m2);
+
+    Matrix<T> operator+(const Matrix<T>& m2);
 };
 
+template<typename T>
+std::ostream& operator<<(std::ostream& out, const Matrix<T>& m);
 
+#include "Matrix.tpp"
 #endif //LIBRARIES_MATRIX_H
