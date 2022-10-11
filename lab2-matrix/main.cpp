@@ -24,5 +24,10 @@ int main(){
     Matrix<int> res = m * m1;
 
     std::cout << res << std::endl << resSum << std::endl;
+
+    auto splitted1 = m.divideMatrix(2);
+    auto splitted2 = m1.divideMatrix(2);
+
+    std::cout << splitted1 << std::endl;
     return 0;
 }
