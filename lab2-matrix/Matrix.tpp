@@ -4,24 +4,26 @@
 template <typename T>
 Matrix<T>::Matrix(std::vector<std::vector<T>> matrix) {
     _matrix = matrix;
+    _tempMatrix.reserve(matrix.size());
+    for (int i = 0; i < matrix.size(); ++i) {
+        _tempMatrix[i].reserve(matrix.size());
+    }
 }
 
 template <typename T>
 Matrix<T> Matrix<T>::operator*(const Matrix<T> &m2) {
-    Matrix result = Matrix<T>();
-
     for (int i = 0; i < this->getSize(); i++){
-        std::vector<T> line;
+        std::vector<T*> line;
         for (int j = 0; j < this->getSize(); ++j) {
-            T element;
-            Matrix<T>::multiplyLineAndRow(this->_matrix[i], m2.getRow(j), element);
-            line.push_back(element);
+            line->push_back(nullptr);
+            Matrix<T>::multiplyLineAndRow(this->_matrix[i], m2.getRow(j), i, j);
         }
-        result.addLine(line);
     }
-    for (auto & thread : threads) {
+    for (auto& thread : threads) {
         thread.join();
     }
+
+    Matrix result = Matrix<T>(_tempMatrix);
     return result;
 }
 
@@ -36,15 +38,13 @@ void Matrix<T>::addLine(const std::vector<T> &row) {
 }
 
 template <typename T>
-void Matrix<T>::multiplyLineAndRow(const std::vector<T>& line,const std::vector<T>& row, T& out) {
-    int element = 0;
+void Matrix<T>::multiplyLineAndRow(const std::vector<T>& line,const std::vector<T>& row, int outLine, int outRow) {
     for (int j = 0; j < line.size(); ++j) {
         //std::thread t(Matrix<T>::multiplyElements, std::cref(line[j]), std::cref(row[j]), std::ref(element));
-        std::thread t([&](){this->multiplyElements(line[j], row[j], out);});
+        //std::thread t();
         //multiplyElements(line[j], row[j], element);
-        threads.push_back(t);
+        threads.emplace_back([&](){this->multiplyElements(line[j], row[j], outLine, outRow);});
     }
-    out = element;
 }
 
 template <typename T>
@@ -98,18 +98,18 @@ T& Matrix<T>::getElement(int line, int row) const{
 }
 
 template<typename T>
-Matrix<Matrix<T>> Matrix<T>::divideMatrix(int blockSize) {
+Matrix<Matrix<T>>* Matrix<T>::divideMatrix(int blockSize) {
     if (this->getSize() < blockSize){
         throw std::logic_error("Block size cannot be more than matrix size");
     }
 
-    Matrix<Matrix<T>> result = Matrix<Matrix<T>>();
+    auto* result = new Matrix<Matrix<T>>();
     for (int i = 0; i < this->getSize(); i += blockSize) {
         std::vector<Matrix<T>> line;
         for (int j = 0; j < this->getSize(); j += blockSize) {
             line.push_back(getBlock(i, j, blockSize));
         }
-        result.addLine(line);
+        result->addLine(line);
     }
     return result;
 }
@@ -137,9 +137,9 @@ int Matrix<T>::getRows() const {
 }
 
 template<typename T>
-void Matrix<T>::multiplyElements(const T& a, const T& b, T& out) {
+void Matrix<T>::multiplyElements(const T& a, const T& b, int outLine, int outRow) {
     _lock.lock();
-    out += a * b;
+    _tempMatrix[outLine][outRow] += a * b;
     _lock.unlock();
 }
 

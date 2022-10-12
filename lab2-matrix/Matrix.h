@@ -10,17 +10,18 @@
 template<typename T>
 class Matrix {
 private:
+    std::mutex _lock;
     std::vector<std::vector<T>> _matrix;
-    static std::mutex _lock;
-    static std::vector<std::thread> threads;
+    std::vector<std::vector<T*>*> _tempMatrix;
+    std::vector<std::thread> threads;
 
-    void multiplyLineAndRow(const std::vector<T>& line,const std::vector<T>& row, T& out);
+    void multiplyLineAndRow(const std::vector<T>& line,const std::vector<T>& row, int outLine, int outRow);
 
     Matrix<T> getBlock(int leftUpLine, int leftUpRow, int size);
 
 public:
 
-    void multiplyElements(const T& a, const T& b, T& out);
+    void multiplyElements(const T& a, const T& b, int outLine, int outRow);
 
     Matrix() = default;
 
@@ -32,7 +33,7 @@ public:
 
     Matrix(const Matrix<T> &matrix);
 
-    Matrix<Matrix> divideMatrix(int blockSize);
+    Matrix<Matrix>* divideMatrix(int blockSize);
 
     [[nodiscard]] int getSize() const;
 
@@ -47,6 +48,8 @@ public:
     Matrix<T> operator*(const Matrix<T>& m2);
 
     Matrix<T> operator+(const Matrix<T>& m2);
+
+    ~Matrix() = default;
 };
 
 template<typename T>
