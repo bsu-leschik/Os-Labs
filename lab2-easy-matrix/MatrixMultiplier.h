@@ -11,14 +11,12 @@ class MatrixMultiplier {
 private:
     std::vector<std::vector<int>> _a;
     std::vector<std::vector<int>> _b;
-    std::mutex _lock;
-    std::vector<std::vector<int>> _temp;
+    static std::mutex _lock;
 
-    void multiplyBlocks(int line, int row, int blockSize);
+    static void multiplyBlocks(std::vector<std::vector<int>>& _a, std::vector<std::vector<int>>& _b, int line, int row, int blockSize, std::vector<std::vector<int>>& out);
 public:
     MatrixMultiplier(const std::vector<std::vector<int>>& a, const std::vector<std::vector<int>>& b);
-    std::vector<std::vector<int>> multiplyMatrices(int blockSize, bool async = true);
-    int getSize();
+    static std::vector<std::vector<int>> multiplyMatrices(std::vector<std::vector<int>>& _a, std::vector<std::vector<int>>& _b, int blockSize, bool async = true);
 };
 
 

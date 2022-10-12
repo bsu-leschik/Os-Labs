@@ -11,16 +11,16 @@ void writeMatrix(std::vector<std::vector<int>> matrix){
     }
 }
 
-void syncTests(MatrixMultiplier* multiplier){
+void syncTests(std::vector<std::vector<int>>& a, std::vector<std::vector<int>>& b){
     auto start = std::chrono::high_resolution_clock::now();
-    auto startResult = multiplier->multiplyMatrices(1, false);
+    auto startResult = MatrixMultiplier::multiplyMatrices(a, b, 1, false);
     auto end = std::chrono::high_resolution_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
     writeMatrix(startResult);
     std::cout << "For block size 1:" << elapsed.count() << std::endl;
-    for (int i = 2; i < multiplier->getSize(); ++i) {
+    for (int i = 2; i < a.size(); ++i) {
         start = std::chrono::high_resolution_clock::now();
-        auto result = multiplier->multiplyMatrices(i, false);
+        auto result = MatrixMultiplier::multiplyMatrices(a, b, i, false);
         end = std::chrono::high_resolution_clock::now();
         elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
         std::cout << "For block size " << i << ":" <<  elapsed.count() << std::endl;
@@ -28,16 +28,16 @@ void syncTests(MatrixMultiplier* multiplier){
 
 }
 
-void asyncTests(MatrixMultiplier* multiplier){
+void asyncTests(std::vector<std::vector<int>>& a, std::vector<std::vector<int>>& b){
     auto start = std::chrono::high_resolution_clock::now();
-    auto startResult = multiplier->multiplyMatrices(1, true);
+    auto startResult = MatrixMultiplier::multiplyMatrices(a, b, 1, true);
     auto end = std::chrono::high_resolution_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
     writeMatrix(startResult);
     std::cout << "For block size 1:" << elapsed.count() << std::endl;
-    for (int i = 2; i < multiplier->getSize(); ++i) {
+    for (int i = 2; i < a.size(); ++i) {
         start = std::chrono::high_resolution_clock::now();
-        auto result = multiplier->multiplyMatrices(i, true);
+        auto result = MatrixMultiplier::multiplyMatrices(a, b, i, true);
         end = std::chrono::high_resolution_clock::now();
         elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
         std::cout << "For block size " << i << ":" <<  elapsed.count() << std::endl;
@@ -61,9 +61,9 @@ int main(){
 
     auto* multiplier = new MatrixMultiplier(matrix, matrix1);
 
-    syncTests(multiplier);
+    syncTests(matrix, matrix1);
     std::cout << "------------------------------------------------------------" << std::endl;
-    asyncTests(multiplier);
+    asyncTests(matrix, matrix1);
 
     delete multiplier;
 }
