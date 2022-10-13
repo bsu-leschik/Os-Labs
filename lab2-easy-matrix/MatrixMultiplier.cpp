@@ -35,7 +35,9 @@ void MatrixMultiplier::multiplyBlocks(std::vector<std::vector<int>>& _a, std::ve
     for (int i = line; i < std::min(line + blockSize, (int)_a.size(), [](int a, int b) {return a < b;}); ++i) {
         for (int j = row; j < std::min(row + blockSize, (int)_a.size(), [](int a, int b) {return a < b;}); ++j) {
             for (int k = 0; k < _a.size(); ++k) {
+                _lock.lock();
                 out[i][j] += _a[i][k] * _b[k][j];
+                _lock.unlock();
             }
         }
     }
