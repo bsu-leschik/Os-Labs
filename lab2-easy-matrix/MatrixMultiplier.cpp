@@ -7,23 +7,24 @@ std::vector<std::vector<int>> *out;
 std::vector<std::thread> threads;
 
 void multiplyBlocksAsync(const std::vector<std::vector<int>> &_a, const std::vector<std::vector<int>> &_b, int blockSize) {
-    auto pair = cords->Recv();
-    if (!pair.second) {
-        return;
-    }
-    int line = pair.first.first;
-    int row = pair.first.second;
+    while(true) {
+        auto pair = cords->Recv();
+        if (!pair.second) {
+            return;
+        }
+        int line = pair.first.first;
+        int row = pair.first.second;
 
-    for (int i = line; i < std::min(line + blockSize, (int) _a.size(), [](int a, int b) { return a < b; }); ++i) {
-        for (int j = row; j < std::min(row + blockSize, (int) _a.size(), [](int a, int b) { return a < b; }); ++j) {
-            for (int k = 0; k < _a.size(); ++k) {
-                lock.lock();
-                (*out)[i][j] += _a[i][k] * _b[k][j];
-                lock.unlock();
+        for (int i = line; i < std::min(line + blockSize, (int) _a.size(), [](int a, int b) { return a < b; }); ++i) {
+            for (int j = row; j < std::min(row + blockSize, (int) _a.size(), [](int a, int b) { return a < b; }); ++j) {
+                for (int k = 0; k < _a.size(); ++k) {
+                    lock.lock();
+                    (*out)[i][j] += _a[i][k] * _b[k][j];
+                    lock.unlock();
+                }
             }
         }
     }
-    multiplyBlocksAsync(_a, _b, blockSize);
 
 }
 

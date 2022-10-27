@@ -38,13 +38,11 @@ public:
 
     std::pair<T, bool> Recv() {
         std::unique_lock<std::mutex> lock(_lockerRcv);
-        if (closed && _container->empty()){
-            return {T(), false};
-        }
 
         _condition.wait(lock, [this](){return !this->_container->empty() || closed;});
 
         if (closed && _container->empty()){
+            _condition.notify_one();
             return {T(), false};
         }
 
@@ -58,7 +56,7 @@ public:
 
     void Close() {
         closed = true;
-        _condition.notify_all();
+        _condition.notify_one();
     }
 
     ~BufferedChannel(){
