@@ -46,6 +46,10 @@ MatrixMultiplier::multiplyMatrices(std::vector<std::vector<int>> &_a, std::vecto
         }
     }
 
+    if (threadsAmount > 0) {
+        cords->Close();
+    }
+
     for (auto &item : threads){
         item.join();
     }

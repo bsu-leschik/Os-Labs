@@ -30,14 +30,14 @@ void syncTests(std::vector<std::vector<int>>& a, std::vector<std::vector<int>>& 
 
 void asyncTests(std::vector<std::vector<int>>& a, std::vector<std::vector<int>>& b){
     auto start = std::chrono::high_resolution_clock::now();
-    auto startResult = MatrixMultiplier::multiplyMatrices(a, b, 1, 1);
+    auto startResult = MatrixMultiplier::multiplyMatrices(a, b, 1, 3);
     auto end = std::chrono::high_resolution_clock::now();
     auto elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
     writeMatrix(startResult);
     std::cout << "For block size 1:" << elapsed.count() << std::endl;
     for (int i = 2; i < a.size(); ++i) {
         start = std::chrono::high_resolution_clock::now();
-        auto result = MatrixMultiplier::multiplyMatrices(a, b, i, 1);
+        auto result = MatrixMultiplier::multiplyMatrices(a, b, i, 3);
         end = std::chrono::high_resolution_clock::now();
         elapsed = std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
         std::cout << "For block size " << i << ":" <<  elapsed.count() << std::endl;
