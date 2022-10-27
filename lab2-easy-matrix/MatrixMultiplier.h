@@ -1,6 +1,7 @@
 #ifndef OS_LABS_MATRIXMULTIPLIER_H
 #define OS_LABS_MATRIXMULTIPLIER_H
 
+#include "../lab3/BufferedChannel.h"
 #include <mutex>
 #include <vector>
 #include <algorithm>
@@ -9,14 +10,15 @@
 
 class MatrixMultiplier {
 private:
-    std::vector<std::vector<int>> _a;
-    std::vector<std::vector<int>> _b;
-    static std::mutex _lock;
+    static void multiplyBlocks(std::vector<std::vector<int>> &_a, std::vector<std::vector<int>> &_b, int line, int row,
+                               int blockSize);
 
-    static void multiplyBlocks(std::vector<std::vector<int>>& _a, std::vector<std::vector<int>>& _b, int line, int row, int blockSize, std::vector<std::vector<int>>& out);
+    static void initThreads(int threadsCount, std::vector<std::vector<int>> &_a, std::vector<std::vector<int>> &_b, int blockSize);
+
 public:
-    MatrixMultiplier(const std::vector<std::vector<int>>& a, const std::vector<std::vector<int>>& b);
-    static std::vector<std::vector<int>> multiplyMatrices(std::vector<std::vector<int>>& _a, std::vector<std::vector<int>>& _b, int blockSize, bool async = true);
+    static std::vector<std::vector<int>>
+    multiplyMatrices(std::vector<std::vector<int>> &_a, std::vector<std::vector<int>> &_b, int blockSize,
+                     int threadsAmount = 0);
 };
 
 
