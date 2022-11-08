@@ -7,11 +7,13 @@
 #include <mutex>
 #include <condition_variable>
 #include <exception>
+#include <iostream>
 
 template<class T>
 class BufferedChannel {
 private:
     std::mutex _locker;
+    std::mutex _lockerRcv;
     std::condition_variable _condition;
     std::queue<T> *_container;
     bool closed;
@@ -35,21 +37,26 @@ public:
     }
 
     std::pair<T, bool> Recv() {
-        if (closed){
+        std::unique_lock<std::mutex> lock(_lockerRcv);
+
+        _condition.wait(lock, [this](){return !this->_container->empty() || closed;});
+
+        if (closed && _container->empty()){
+            _condition.notify_one();
             return {T(), false};
         }
 
-        std::unique_lock<std::mutex> lock(_locker);
-        _condition.wait(lock, [this](){return !this->_container->empty();});
         auto result = std::pair<T, bool>(_container->front(), true);
         _container->pop();
         _condition.notify_one();
+
         return result;
 
     }
 
     void Close() {
         closed = true;
+        _condition.notify_one();
     }
 
     ~BufferedChannel(){
