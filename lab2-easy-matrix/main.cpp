@@ -59,11 +59,7 @@ int main(){
     std::vector<int> line9 = std::vector<int>({7, 12, 43, 5, 95});
     std::vector<std::vector<int>> matrix1 = std::vector<std::vector<int>>({line5, line6, line7, line8, line9});
 
-    auto* multiplier = new MatrixMultiplier(matrix, matrix1);
-
     syncTests(matrix, matrix1);
     std::cout << "------------------------------------------------------------" << std::endl;
     asyncTests(matrix, matrix1);
-
-    delete multiplier;
 }

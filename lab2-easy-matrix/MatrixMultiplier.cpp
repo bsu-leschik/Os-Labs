@@ -1,44 +1,67 @@
 #include "MatrixMultiplier.h"
 
-MatrixMultiplier::MatrixMultiplier(const std::vector<std::vector<int>>& a,const std::vector<std::vector<int>>& b) {
-    if (a.size() < 5 || b.size() < 5){
-        throw std::logic_error("matrix is too small");
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
+
+std::vector<std::vector<int>> a;
+std::vector<std::vector<int>> b;
+int blockSize;
+std::vector<std::vector<int>> out;
+
+static void *multiplyBlocks(void* args);
+
+std::vector<std::vector<int>> MatrixMultiplier::multiplyMatrices(std::vector<std::vector<int>>& _a, std::vector<std::vector<int>>& _b, int _blockSize, bool async) {
+
+    a = _a;
+    b = _b;
+    blockSize = _blockSize;
+
+    out = std::vector<std::vector<int>>(_a.size(), std::vector<int>(_a.size()));
+
+    std::vector<pthread_t> threads;
+    pthread_attr_t attr;
+
+    if (async) {
+        pthread_mutex_init(&lock, NULL);
+        pthread_attr_init(&attr);
     }
-    this->_a = a;
-    this->_b = b;
-}
 
-std::vector<std::vector<int>> MatrixMultiplier::multiplyMatrices(std::vector<std::vector<int>>& _a, std::vector<std::vector<int>>& _b, int blockSize, bool async) {
+    for (int line = 0; line < a.size(); line += blockSize) {
+        for (int row = 0; row < a.size(); row += blockSize) {
+            int* args = new int[2];
+            args[0] = line;
+            args[1] = row;
 
-    std::vector<std::vector<int>> temp = std::vector<std::vector<int>>(_a.size(), std::vector<int>(_a.size()));
-    std::vector<std::thread> threads;
-    for (int line = 0; line < _a.size(); line += blockSize) {
-        for (int row = 0; row < _a.size(); row += blockSize) {
             if (async) {
-                threads.emplace_back(multiplyBlocks, std::ref(_a), std::ref(_b), line, row, blockSize, std::ref(temp));
+                threads.emplace_back();
+                pthread_create(&threads.back(), &attr, &multiplyBlocks, args);
             }
             else {
-                multiplyBlocks(_a, _b, line, row, blockSize, temp);
+                multiplyBlocks(args);
             }
         }
     }
     if (async) {
-        for (auto &thread: threads) {
-            thread.join();
+        for (pthread_t &thread: threads) {
+            pthread_join(thread, nullptr);
         }
     }
-    return temp;
+    return out;
 }
 
 
-void MatrixMultiplier::multiplyBlocks(std::vector<std::vector<int>>& _a, std::vector<std::vector<int>>& _b, int line, int row, int blockSize, std::vector<std::vector<int>>& out) {
-    for (int i = line; i < std::min(line + blockSize, (int)_a.size(), [](int a, int b) {return a < b;}); ++i) {
-        for (int j = row; j < std::min(row + blockSize, (int)_a.size(), [](int a, int b) {return a < b;}); ++j) {
-            for (int k = 0; k < _a.size(); ++k) {
-                _lock.lock();
-                out[i][j] += _a[i][k] * _b[k][j];
-                _lock.unlock();
+void *multiplyBlocks(void* args) {
+    int* nums = static_cast<int *>(args);
+    int line = nums[0];
+    int row = nums[1];
+
+    for (int i = line; i < std::min(line + blockSize, (int)a.size(), [](int a1, int b1) {return a1 < b1;}); ++i) {
+        for (int j = row; j < std::min(row + blockSize, (int)a.size(), [](int a2, int b2) {return a2 < b2;}); ++j) {
+            for (int k = 0; k < a.size(); ++k) {
+                pthread_mutex_lock(&lock);
+                out[i][j] += a[i][k] * b[k][j];
+                pthread_mutex_unlock(&lock);
             }
         }
     }
+    delete nums;
 }
