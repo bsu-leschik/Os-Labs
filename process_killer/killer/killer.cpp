@@ -1,14 +1,19 @@
+#include <windows.h>
+
 #include <cstdlib>
 #include <winnt.h>
-#include <windows.h>
 #include <TlHelp32.h>
+#include <string>
+#include <vector>
 
 
 void killProcessByName(char* name);
 void killProcessByID(DWORD id);
+void killProcessesFromVariable();
 
 const char* NAME_PARAMETER = "--name";
 const char* ID_PARAMETER = "--id";
+const int VAR_LENGTH = 200;
 
 int main(int argc, char *argv[]){
     for (int i = 0; i < argc; ++i) {
@@ -19,7 +24,36 @@ int main(int argc, char *argv[]){
             killProcessByID(atoi(argv[++i]));
         }
     }
+    killProcessesFromVariable();
 }
+
+std::vector<std::string> getWords(CHAR* line,DWORD length){
+    std::string word;
+    std::vector<std::string> words;
+
+    for (DWORD i = 0; i < length - 1; ++i) {
+        if  (line[i] != ',') {
+            word.push_back(line[i]);
+        }
+        else{
+            words.push_back(word);
+            word.clear();
+        }
+    }
+
+    return words;
+}
+
+void killProcessesFromVariable(){
+    CHAR *processesToKill = new CHAR[200];
+    DWORD length =  GetEnvironmentVariableA("PROC_TO_KILL", processesToKill, VAR_LENGTH);
+    auto namesPrToKill = getWords(processesToKill, length);
+
+    for (auto item: namesPrToKill){
+        killProcessByName(item.data());
+    }
+}
+
 
 void killProcessByName(char *name){
     HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPALL, 0);
