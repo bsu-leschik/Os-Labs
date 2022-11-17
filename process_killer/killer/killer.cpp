@@ -13,6 +13,7 @@ void killProcessesFromVariable();
 
 const char* NAME_PARAMETER = "--name";
 const char* ID_PARAMETER = "--id";
+const CHAR* GLOBAL_VARIABLE_NAME = "PROC_TO_KILL";
 const int VAR_LENGTH = 200;
 
 int main(int argc, char *argv[]){
@@ -46,7 +47,7 @@ std::vector<std::string> getWords(CHAR* line,DWORD length){
 
 void killProcessesFromVariable(){
     CHAR *processesToKill = new CHAR[200];
-    DWORD length =  GetEnvironmentVariableA("PROC_TO_KILL", processesToKill, VAR_LENGTH);
+    DWORD length =  GetEnvironmentVariableA(GLOBAL_VARIABLE_NAME, processesToKill, VAR_LENGTH);
     auto namesPrToKill = getWords(processesToKill, length);
 
     for (auto item: namesPrToKill){
