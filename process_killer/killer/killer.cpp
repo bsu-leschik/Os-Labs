@@ -18,11 +18,13 @@ const int VAR_LENGTH = 200;
 
 int main(int argc, char *argv[]){
     for (int i = 0; i < argc; ++i) {
-        if  (argv[i] == NAME_PARAMETER){
+        if  (strcmp(argv[i], NAME_PARAMETER) == 0){
             killProcessByName(argv[++i]);
+            break;
         }
-        else if(argv[i] == ID_PARAMETER){
+        else if(strcmp(argv[i], ID_PARAMETER) == 0){
             killProcessByID(atoi(argv[++i]));
+            break;
         }
     }
     killProcessesFromVariable();
@@ -47,7 +49,7 @@ std::vector<std::string> getWords(CHAR* line,DWORD length){
 
 void killProcessesFromVariable(){
     CHAR *processesToKill = new CHAR[200];
-    DWORD length =  GetEnvironmentVariableA(GLOBAL_VARIABLE_NAME, processesToKill, VAR_LENGTH);
+    DWORD length = GetEnvironmentVariable(GLOBAL_VARIABLE_NAME, processesToKill, VAR_LENGTH);
     auto namesPrToKill = getWords(processesToKill, length);
 
     for (auto item: namesPrToKill){
@@ -64,7 +66,7 @@ void killProcessByName(char *name){
     BOOL isMoreProcesses = Process32First(snapshot, &procEntry);
 
     while (isMoreProcesses){
-        if (name == procEntry.szExeFile){
+        if (strcmp(name, procEntry.szExeFile) == 0){
             killProcessByID(procEntry.th32ProcessID);
         }
         isMoreProcesses = Process32Next(snapshot, &procEntry);
