@@ -32,9 +32,9 @@ int main(int argc, char *argv[]){
 
 std::vector<std::string> getWords(CHAR* line,DWORD length){
     std::string word;
-    std::vector<std::string> words;
+    std::vector<std::string> words = std::vector<std::string>();
 
-    for (DWORD i = 0; i < length - 1; ++i) {
+    for (DWORD i = 0; i < length; ++i) {
         if  (line[i] != ',') {
             word.push_back(line[i]);
         }
@@ -44,6 +44,7 @@ std::vector<std::string> getWords(CHAR* line,DWORD length){
         }
     }
 
+    words.push_back(word);
     return words;
 }
 
