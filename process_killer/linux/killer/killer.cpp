@@ -5,8 +5,6 @@
 #include <cstring>
 
 #include <sys/wait.h>
-#include <sys/types.h>
-#include <iostream>
 
 void killProcessByName(char* name);
 void killProcessByID(int id);

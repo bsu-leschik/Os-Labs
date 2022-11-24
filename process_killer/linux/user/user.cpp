@@ -1,19 +1,20 @@
-#include <windows.h>
-#include <winnt.h>
-#include <TlHelp32.h>
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/types.h>
 
 #include <vector>
 #include <string>
+#include <cstring>
 #include <iostream>
 
-const char *PATH_TO_KILLER = R"(C:\Users\pimak\CLionProjects\Os-Labs\process_killer\killer\cmake-build-debug\killer.exe)";
-const LPCTSTR PROCESSES = "Telegram.exe,Spotify.exe";
-const CHAR* PROCESSES_NAME = "Discord.exe";
-const CHAR* PROCESSES_ID_NAMES = "3856";
+std::string PATH_TO_KILLER = "/home/skalem/CLionProjects/Os-Labs/process_killer/linux/killer/cmake-build-debug/killer";
+std::string PROCESSES = "telegram-desktop, spotify";
+std::string PROCESSES_NAME = "discord";
+std::string PROCESSES_ID_NAMES = "18492";
 //change id according to taskhost
-const LPCTSTR GLOBAL_VARIABLE_NAME = "PROC_TO_KILL";
+std::string GLOBAL_VARIABLE_NAME = "PROC_TO_KILL";
 
-bool ifProcessNameExist(std::string name);
+bool ifProcessNameExist(const std::string& name);
 bool ifProcessIdExist(int id);
 
 void removeFromVariableTest();
@@ -27,71 +28,64 @@ int main(){
 }
 
 
-bool ifProcessNameExist(std::string name){
-    HANDLE snapshot = CreateToolhelp32Snapshot(TH32CS_SNAPALL, 0);
+bool ifProcessNameExist(const std::string& name){
+    char* command = new char[200];
+    strcat(command, "pidof ");
+    strcat(command, name.c_str());
 
-    PROCESSENTRY32 procEntry;
-    procEntry.dwSize = sizeof(procEntry);
-    BOOL isMoreProcesses = Process32First(snapshot, &procEntry);
+    FILE* pipe = popen(command, "r");
 
-    while (isMoreProcesses){
-        if (name == procEntry.szExeFile){
-            return true;
-        }
-        isMoreProcesses = Process32Next(snapshot, &procEntry);
-    }
-    return false;
+    char buf[512];
+    fgets(buf, 512, pipe);
+
+    return isdigit(buf[0]);
 }
 
 void removeFromVariableTest(){
-    if (SetEnvironmentVariable(GLOBAL_VARIABLE_NAME ,PROCESSES)){
+    if (setenv(GLOBAL_VARIABLE_NAME.c_str(), PROCESSES.c_str(), 1)){
 
-        std::cout << "Spotify.exe: " << ifProcessNameExist("Spotify.exe") << " ";
-        std::cout << "Telegram.exe: " << ifProcessNameExist("Telegram.exe") << std::endl;
+        std::cout << "spotify: " << ifProcessNameExist("spotify") << " ";
+        std::cout << "telegram-desktop: " << ifProcessNameExist("telegram-desktop") << std::endl;
 
-        STARTUPINFO si = {sizeof(si)};
-        PROCESS_INFORMATION process_information;
-        const int BUFF_SIZE = 500;
-        char buffer[BUFF_SIZE];
-        strcpy_s(buffer, 500, PATH_TO_KILLER);
+        int child = fork();
 
-        CreateProcess(nullptr, buffer, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &process_information);
+        if (child == getpid()){
+            execle(PATH_TO_KILLER.c_str(), PATH_TO_KILLER.c_str(), GLOBAL_VARIABLE_NAME.data());
+            exit(0);
+        }
 
-        WaitForSingleObject(process_information.hProcess, INFINITE);
-        WaitForSingleObject(process_information.hThread, INFINITE);
-        CloseHandle(process_information.hThread);
-        CloseHandle(process_information.hProcess);
+        int stat;
+        wait(&stat);
 
-        Sleep(500);
-
-        std::cout << "Spotify.exe: " << ifProcessNameExist("Spotify.exe") << " ";
-        std::cout << "Telegram.exe: " << ifProcessNameExist("Telegram.exe") << std::endl;
+        std::cout << "spotify: " << ifProcessNameExist("spotify") << " ";
+        std::cout << "telegram-desktop: " << ifProcessNameExist("telegram-desktop") << std::endl;
     }
-    SetEnvironmentVariable(GLOBAL_VARIABLE_NAME, nullptr);
+    unsetenv(GLOBAL_VARIABLE_NAME.c_str());
 }
 
 void removeByIdTest(){
 
-    std::cout << PROCESSES_ID_NAMES << " " << ifProcessIdExist(atoi(PROCESSES_ID_NAMES)) << std::endl;
+    std::cout << PROCESSES_ID_NAMES << " " << ifProcessIdExist(stoi(PROCESSES_ID_NAMES)) << std::endl;
 
-    STARTUPINFO si = {sizeof(si)};
-    PROCESS_INFORMATION process_information;
-    const int BUFF_SIZE = 500;
-    char buffer[BUFF_SIZE];
-    strcpy_s(buffer, 500, PATH_TO_KILLER);
-    strcat_s(buffer, " --id ");
-    strcat_s(buffer, PROCESSES_ID_NAMES);
+    int child = fork();
 
-    CreateProcess(nullptr, buffer, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &process_information);
+    if (child == getpid()){
+        std::string args = PATH_TO_KILLER;
+        args.append(" ");
+        args.append("--id ");
+        args.append(PROCESSES_ID_NAMES);
+        execl(PATH_TO_KILLER.c_str(), args.c_str());
+        exit(0);
+    }
 
-    Sleep(500);
+    int stat;
+    wait(&stat);
 
-    std::cout << PROCESSES_ID_NAMES << " " << ifProcessIdExist(atoi(PROCESSES_ID_NAMES)) << std::endl;
+    std::cout << PROCESSES_ID_NAMES << " " << ifProcessIdExist(stoi(PROCESSES_ID_NAMES)) << std::endl;
 }
 
 bool ifProcessIdExist(int id){
-    HANDLE handle = OpenProcess(PROCESS_TERMINATE, FALSE, id);
-    return handle != nullptr;
+    return kill(id, 0);
 
 }
 
@@ -99,17 +93,19 @@ void removeByNameTest(){
 
     std::cout << PROCESSES_NAME << " " << ifProcessNameExist(PROCESSES_NAME) << std::endl;
 
-    STARTUPINFO si = {sizeof(si)};
-    PROCESS_INFORMATION process_information;
-    const int BUFF_SIZE = 500;
-    char buffer[BUFF_SIZE];
-    strcpy_s(buffer, 500, PATH_TO_KILLER);
-    strcat_s(buffer, " --name ");
-    strcat_s(buffer, PROCESSES_NAME);
+    int child = fork();
 
-    CreateProcess(nullptr, buffer, nullptr, nullptr, FALSE, 0, nullptr, nullptr, &si, &process_information);
+    if (child == getpid()){
+        std::string args = PATH_TO_KILLER;
+        args.append(" ");
+        args.append("--name ");
+        args.append(PROCESSES_NAME);
+        execl(PATH_TO_KILLER.c_str(), args.c_str());
+        exit(0);
+    }
 
-    Sleep(500);
+    int stat;
+    wait(&stat);
 
     std::cout << PROCESSES_NAME << " " << ifProcessNameExist(PROCESSES_NAME) << std::endl;
 }
