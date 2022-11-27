@@ -35,7 +35,7 @@ std::vector<std::string> getWords(const std::string& line){
     std::vector<std::string> words = std::vector<std::string>();
 
     for (char i : line) {
-        if  (i != ',') {
+        if  (i != ' ') {
             word.push_back(i);
         }
         else{
@@ -68,14 +68,23 @@ void killProcessByName(char *name){
 
     FILE* pipe = popen(command, "r");
 
-    char buf[512];
+    char* buf = new char[512];
     fgets(buf, 512, pipe);
 
-    if(!isdigit(buf[0])){
+    std::string buffer(buf);
+    delete[] buf;
+
+    std::vector<std::string> pids = getWords(buffer);
+
+    if(!std::isdigit(pids[0][0])){
         return;
     }
-    int pid = strtoul(buf, NULL, 10);
-    killProcessByID(pid);
+
+    for (const auto &item: pids){
+        int pid = std::stoi(item);
+        killProcessByID(pid);
+    }
+
 }
 
 void killProcessByID(int id){
