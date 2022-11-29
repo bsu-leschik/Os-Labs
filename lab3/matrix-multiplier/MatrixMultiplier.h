@@ -1,7 +1,7 @@
 #ifndef OS_LABS_MATRIXMULTIPLIER_H
 #define OS_LABS_MATRIXMULTIPLIER_H
 
-#include "../lab3/BufferedChannel.h"
+#include "../BufferedChannel.h"
 #include <mutex>
 #include <vector>
 #include <algorithm>
