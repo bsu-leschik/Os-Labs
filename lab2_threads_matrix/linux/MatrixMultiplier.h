@@ -4,7 +4,7 @@
 #include <mutex>
 #include <vector>
 #include <algorithm>
-#include <pthread.h>
+#include <windows.h>
 #include <exception>
 
 class MatrixMultiplier {
