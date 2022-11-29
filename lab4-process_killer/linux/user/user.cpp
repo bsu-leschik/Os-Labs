@@ -7,10 +7,10 @@
 #include <cstring>
 #include <iostream>
 
-std::string PATH_TO_KILLER = "/home/skalem/CLionProjects/Os-Labs/process_killer/linux/killer/cmake-build-debug/killer";
+std::string PATH_TO_KILLER = "/home/skalem/CLionProjects/Os-Labs/lab4-process_killer/linux/killer/cmake-build-debug/killer";
 std::string PROCESSES = "telegram-desktop spotify";
 std::string PROCESSES_NAME = "Discord";
-std::string PROCESSES_ID_NAMES = "12597";
+std::string PROCESSES_ID_NAMES = "10480";
 //change id according to taskhost
 std::string GLOBAL_VARIABLE_NAME = "PROC_TO_KILL";
 std::string NAME_STRING = "--name";
