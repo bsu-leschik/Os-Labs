@@ -1,6 +1,6 @@
 #include <string>
-#include <unistd.h>
 #include <vector>
+#include <iostream>
 
 std::vector<int> parseLine(std::string line){
     std::string word;
@@ -20,25 +20,14 @@ std::vector<int> parseLine(std::string line){
     return words;
 }
 
-int main(int argc, char *argv[]){
-    if (argc < 2){
-        return 1;
+int main(){
+    std::string line;
+    std::getline(std::cin, line);
+
+    auto numbers = parseLine(line);
+
+    for (int item : numbers){
+        std::cout << item * 7 << " ";
     }
-
-    int pipefd[] = {atoi(argv[0]), atoi(argv[1])};
-    char* buffer;
-    read(pipefd[0], buffer, 500);
-
-    auto numbers = parseLine(std::string(buffer));
-    delete buffer;
-
-    char* out[numbers.size() + 1];
-    for (int i = 0; i < numbers.size(); ++i) {
-        out[i] = std::to_string(numbers[i] * numbers[i] * numbers[i]).data();
-    }
-
-    out[numbers.size() + 1] = new char('\n');
-
-    write(pipefd[1], out, numbers.size());
     return 0;
 }
