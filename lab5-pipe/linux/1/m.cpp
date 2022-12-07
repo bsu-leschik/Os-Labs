@@ -7,10 +7,16 @@ std::vector<int> parseLine(std::string line){
     auto words = std::vector<int>();
 
     for (char i : line) {
+        if (i == '\n'){
+            break;
+        }
         if  (i != ' ') {
             word.push_back(i);
         }
         else{
+            if (word.empty()){
+                continue;
+            }
             words.push_back(stoi(word));
             word.clear();
         }
@@ -29,5 +35,6 @@ int main(){
     for (int item : numbers){
         std::cout << item * 7 << " ";
     }
+    std::cout << std::endl;
     return 0;
 }
