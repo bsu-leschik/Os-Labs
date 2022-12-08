@@ -4,7 +4,6 @@
 #include <fileapi.h>
 
 #include <string>
-#include <iostream>
 
 std::string processes[] = { R"(C:\Users\pimak\CLionProjects\Os-Labs\lab5-pipe\windows\1\cmake-build-debug\M.exe)",
                             R"(C:\Users\pimak\CLionProjects\Os-Labs\lab5-pipe\windows\2\cmake-build-debug\A.exe)",
@@ -24,18 +23,6 @@ STARTUPINFO si = {sizeof(si)};
 
 void openPipe(HANDLE descriptors[2]){
     CreatePipe(&descriptors[0], &descriptors[1], &securityAttributes, 0);
-}
-
-void closePipe(HANDLE descriptors[2]){
-    CloseHandle(descriptors[0]);
-    CloseHandle(descriptors[1]);
-}
-
-void configureStartupInfo(HANDLE descriptors[2]){
-    si.hStdInput = descriptors[0];
-    //si.hStdOutput = descriptors[1];
-    //si.hStdError = descriptors[1];
-    si.dwFlags = STARTF_USESTDHANDLES;
 }
 
 int main(){
