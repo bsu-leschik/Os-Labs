@@ -1,12 +1,10 @@
-
 #include <string>
 #include <sys/wait.h>
 #include <iostream>
 
-std::string processes[] = {"/home/skalem/CLionProjects/Os-Labs/lab5-pipe/linux/1/cmake-build-debug/M",
- "/home/skalem/CLionProjects/Os-Labs/lab5-pipe/linux/2/cmake-build-debug/A",
- "/home/skalem/CLionProjects/Os-Labs/lab5-pipe/linux/3/cmake-build-debug/P",
- "/home/skalem/CLionProjects/Os-Labs/lab5-pipe/linux/4/cmake-build-debug/S"};
+std::string home = "/home/skalem/CLionProjects/Os-Labs/lab5-pipe/linux/cmake-build-debug/";
+
+std::string processes[] = {home + "M",home + "A",home + "P",home + "S"};
 
 int main(){
 
