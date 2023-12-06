@@ -6,4 +6,3 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 project(named_pipes)
 
 add_executable(named_pipes_server server.cpp)
-add_executable(named_pipes_client client.cpp)
