@@ -5,10 +5,10 @@
 
 #include <string>
 
-std::string processes[] = { R"(C:\Users\pimak\CLionProjects\Os-Labs\lab5-pipe\windows\1\cmake-build-debug\M.exe)",
-                            R"(C:\Users\pimak\CLionProjects\Os-Labs\lab5-pipe\windows\2\cmake-build-debug\A.exe)",
-                            R"(C:\Users\pimak\CLionProjects\Os-Labs\lab5-pipe\windows\3\cmake-build-debug\P.exe)",
-                            R"(C:\Users\pimak\CLionProjects\Os-Labs\lab5-pipe\windows\4\cmake-build-debug\S.exe)"};
+std::string processes[] = { R"(C:\Users\Dima\CLionProjects\Os-Labs\lab5-pipe\windows\1\cmake-build-debug\M.exe)",
+                            R"(C:\Users\Dima\CLionProjects\Os-Labs\lab5-pipe\windows\2\cmake-build-debug\A.exe)",
+                            R"(C:\Users\Dima\CLionProjects\Os-Labs\lab5-pipe\windows\3\cmake-build-debug\P.exe)",
+                            R"(C:\Users\Dima\CLionProjects\Os-Labs\lab5-pipe\windows\4\cmake-build-debug\S.exe)"};
 
 std::string currentDir;
 
